@@ -34,4 +34,5 @@ contract Will {
     function drain() view public onlyRecipient {
         require(block.timestamp > lastPingTimestamp + 365 days, "Owner has pinged recently");
     }
+    
 }

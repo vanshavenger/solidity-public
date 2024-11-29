@@ -44,4 +44,10 @@ contract User {
     function getOwner() view public returns (address)  {
         return owner;
     } 
+    
+    function burn(uint amount) public {
+         require(holdings[msg.sender] >= amount, "Don't have required money!");
+         holdings[msg.sender] -= amount;
+         totalSupply -= amount;
+    }
 }
