@@ -31,15 +31,7 @@ contract Will {
         return (owner, recipient);
     }
 
-    function drain() public onlyRecipient {
+    function drain() view public onlyRecipient {
         require(block.timestamp > lastPingTimestamp + 365 days, "Owner has pinged recently");
-        
-        uint256 balance = address(this).balance;
-        require(balance > 0, "No funds to drain");
-        
-        (bool sent, ) = recipient.call{value: balance}("");
-        require(sent, "Failed to send Ether");
     }
-
-    receive() external payable {}
 }
