@@ -1,11 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract User {
+contract VGToken {
     address public owner;
     mapping(address => uint) private holdings;
     uint totalSupply;
     mapping (address => mapping (address => uint)) public allowances;
+
+    event Transfer(address indexed from, address indexed to, uint value);
+    event Approval(address indexed owner, address indexed spender, uint value);
+
+    uint decimals = 3;
+    string public name = "VGToken";
+    string public symbol = "VGT";
 
 
     modifier onlyOwner {
@@ -52,7 +59,7 @@ contract User {
          totalSupply -= amount;
     }
 
-    function approveAllowance(address spender, uint amount) public {
+    function allow(address spender, uint amount) public {
         allowances[msg.sender][spender] = amount;
     }
 
