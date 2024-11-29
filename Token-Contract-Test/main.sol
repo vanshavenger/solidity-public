@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 contract VGToken {
     address public owner;
     mapping(address => uint) private holdings;
-    uint totalSupply;
+    uint supply;
     mapping (address => mapping (address => uint)) public allowances;
 
     event Transfer(address indexed from, address indexed to, uint value);
@@ -26,12 +26,12 @@ contract VGToken {
 
     function mint(uint amount) onlyOwner public {
         holdings[msg.sender] += amount;
-        totalSupply += amount;
+        supply += amount;
     }
 
     function mintTo(address destination,uint amount) onlyOwner public {
         holdings[destination] += amount;
-        totalSupply += amount;
+        supply += amount;
     }
 
     function transfer(address destination, uint amount) public {
@@ -41,12 +41,12 @@ contract VGToken {
 
     }
 
-    function balance(address user) onlyOwner view public returns (uint)  {
+    function balanceOf(address user) onlyOwner view public returns (uint)  {
         return holdings[user];
     } 
 
-    function getTotalSupply() onlyOwner view public returns (uint)  {
-        return totalSupply;
+    function totalSupply() onlyOwner view public returns (uint)  {
+        return supply;
     } 
 
     function getOwner() view public returns (address)  {
@@ -56,10 +56,10 @@ contract VGToken {
     function burn(uint amount) public {
          require(holdings[msg.sender] >= amount, "Don't have required money!");
          holdings[msg.sender] -= amount;
-         totalSupply -= amount;
+         supply -= amount;
     }
 
-    function allow(address spender, uint amount) public {
+    function approve(address spender, uint amount) public {
         allowances[msg.sender][spender] = amount;
     }
 
@@ -69,5 +69,9 @@ contract VGToken {
         holdings[sender] -= amount;
         holdings[recipient] += amount;
         allowances[sender][msg.sender] -= amount;
+    }
+
+    function allowance(address sender, address spender) public view returns (uint) {
+        return allowances[sender][spender];
     }
 }
