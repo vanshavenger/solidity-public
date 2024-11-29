@@ -5,6 +5,7 @@ contract User {
     address public owner;
     mapping(address => uint) private holdings;
     uint totalSupply;
+    mapping (address => mapping (address => uint)) public allowances;
 
 
     modifier onlyOwner {
@@ -44,10 +45,22 @@ contract User {
     function getOwner() view public returns (address)  {
         return owner;
     } 
-    
+
     function burn(uint amount) public {
          require(holdings[msg.sender] >= amount, "Don't have required money!");
          holdings[msg.sender] -= amount;
          totalSupply -= amount;
+    }
+
+    function approveAllowance(address spender, uint amount) public {
+        allowances[msg.sender][spender] = amount;
+    }
+
+    function transferFrom(address sender, address recipient, uint amount) public {
+        require(holdings[sender] >= amount, "Don't have required money!");
+        require(allowances[sender][msg.sender] >= amount, "Not allowed to transfer this amount!");
+        holdings[sender] -= amount;
+        holdings[recipient] += amount;
+        allowances[sender][msg.sender] -= amount;
     }
 }
