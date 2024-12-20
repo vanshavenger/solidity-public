@@ -13,9 +13,12 @@ contract BridgeBase is Ownable {
     address public tokenAddress;
     mapping(address => uint256) public balanceOfTokens;
 
-    event Burn (address indexed sender, uint256 _tokenValue);
+    event Burn(address indexed sender, uint256 _tokenValue);
+    event Deposit(address indexed user, uint256 amount);
+    event Withdrawal(address indexed user, uint256 amount);
 
     constructor(address _tokenAddress) Ownable(_msgSender()) {
+        require(_tokenAddress != address(0), "Zero address not allowed");
         tokenAddress = _tokenAddress;
     }
 
@@ -24,28 +27,31 @@ contract BridgeBase is Ownable {
         require(_amount > 0, "Invalid amount");
         require(balanceOfTokens[msg.sender] >= _amount, "Insufficient balance");
 
-        IBBase(_tokenAddress).burn(msg.sender, _amount);
-
         balanceOfTokens[msg.sender] -= _amount;
+
+        IBBase(_tokenAddress).burn(msg.sender, _amount);
 
         emit Burn(msg.sender, _amount);
     }
 
     function withdraw(address _tokenAddress, uint256 _amount) public {
-
         require(_tokenAddress == tokenAddress, "Invalid token address");
         require(_amount > 0, "Invalid amount");
         require(balanceOfTokens[msg.sender] >= _amount, "Insufficient balance");
 
         balanceOfTokens[msg.sender] -= _amount;
-
+        
         IBBase(_tokenAddress).mint(msg.sender, _amount);
 
+        emit Withdrawal(msg.sender, _amount);
     }
 
     function depositOnOtherSide(address userAccount, uint256 _amount) public onlyOwner {
-        require(balanceOfTokens[userAccount] > 0, "Insufficient balance");
+        require(userAccount != address(0), "Invalid user address");
+        require(_amount > 0, "Invalid amount");
 
         balanceOfTokens[userAccount] += _amount;
+
+        emit Deposit(userAccount, _amount);
     }
 }
