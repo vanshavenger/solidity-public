@@ -1,3 +1,6 @@
 [submodule "hello_template/lib/openzeppelin-contracts"]
 	path = hello_template/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "token_bridge/lib/openzeppelin-contracts"]
+	path = token_bridge/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
