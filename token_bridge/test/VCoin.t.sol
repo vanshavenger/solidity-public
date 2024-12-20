@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import "src/VCoin.sol";
 
 contract TestContract is Test {
-     VCoin c;
+    VCoin c;
 
     function setUp() public {
         c = new VCoin();
