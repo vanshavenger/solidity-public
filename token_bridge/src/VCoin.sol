@@ -7,7 +7,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 contract VCoin is ERC20, Ownable {
     constructor() ERC20("VCoin", "VC") Ownable(_msgSender()) {}
 
-    function mint(address to, uint256 amount) public onlyOwner {
-        _mint(to, amount);
+    function mint(address _to, uint256 _amount) public onlyOwner {
+        _mint(_to, _amount);
     }
 }

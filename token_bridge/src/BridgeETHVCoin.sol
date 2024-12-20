@@ -50,7 +50,7 @@ contract BridgeETH is Ownable {
         emit WithDrawEvent(msg.sender, _amount);
     }
 
-    function burnOnotherSide(address userAccount, uint256 _amount) public onlyOwner {
+    function burnOnOtherSide(address userAccount, uint256 _amount) public onlyOwner {
         require(balanceOfTokens[userAccount] > 0, "Insufficient balance");
 
         balanceOfTokens[userAccount] += _amount;
