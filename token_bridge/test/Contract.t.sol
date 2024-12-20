@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
 import {console2} from "../lib/openzeppelin-contracts/lib/forge-std/src/console2.sol";
