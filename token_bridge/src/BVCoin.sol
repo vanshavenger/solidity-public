@@ -6,8 +6,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract BVCoin is ERC20, Ownable, Pausable {
-    uint256 public constant MAX_SUPPLY = 1000000000 * 10**18;
-    
+    uint256 public constant MAX_SUPPLY = 1000000000 * 10 ** 18;
+
     event Minted(address indexed to, uint256 amount);
     event Burned(address indexed from, uint256 amount);
 

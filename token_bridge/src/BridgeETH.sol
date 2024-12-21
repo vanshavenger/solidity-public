@@ -8,11 +8,11 @@ contract BridgeETH is Ownable {
     address public tokenAddress;
 
     mapping(address => uint256) public balanceOfTokens;
+    mapping(address => uint256) public nonces;
 
-    event LockEvent(address indexed sender, uint256 _tokenValue);
-    event WithDrawEvent(address indexed sender, uint256 _tokenValue);
-
-    event TokenUnlock(address indexed _to, uint256 _amount);
+    event LockEvent(address indexed sender, uint256 _tokenValue, uint256 nonce);
+    event WithDrawEvent(address indexed sender, uint256 _tokenValue, uint256 nonce);
+    event TokenUnlock(address indexed _to, uint256 _amount, uint256 nonce);
 
     constructor(address _tokenAddress) Ownable(msg.sender) {
         tokenAddress = _tokenAddress;
@@ -32,8 +32,9 @@ contract BridgeETH is Ownable {
         require(sent, "Token transfer failed");
 
         balanceOfTokens[msg.sender] += _amount;
+        uint256 nonce = nonces[msg.sender]++;
 
-        emit LockEvent(msg.sender, _amount);
+        emit LockEvent(msg.sender, _amount, nonce);
     }
 
     function withdraw(address _tokenAddress, uint256 _amount) public {
@@ -42,19 +43,23 @@ contract BridgeETH is Ownable {
         require(balanceOfTokens[msg.sender] >= _amount, "Insufficient balance");
 
         balanceOfTokens[msg.sender] -= _amount;
+        uint256 nonce = nonces[msg.sender]++;
 
         bool sent = IERC20(_tokenAddress).transfer(msg.sender, _amount);
 
         require(sent, "Token transfer failed");
 
-        emit WithDrawEvent(msg.sender, _amount);
+        emit WithDrawEvent(msg.sender, _amount, nonce);
     }
 
-    function burnOnOtherSide(address userAccount, uint256 _amount) public onlyOwner {
+    function burnOnOtherSide(address userAccount, uint256 _amount, uint256 _nonce) public onlyOwner {
         require(balanceOfTokens[userAccount] > 0, "Insufficient balance");
+        require(_nonce == nonces[userAccount], "Invalid nonce");
 
         balanceOfTokens[userAccount] += _amount;
 
-        emit TokenUnlock(userAccount, _amount);
+        nonces[userAccount]++;
+
+        emit TokenUnlock(userAccount, _amount, _nonce);
     }
 }

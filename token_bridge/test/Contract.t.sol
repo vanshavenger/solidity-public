@@ -13,13 +13,13 @@ contract BridgeTest is Test {
     VCoin public vCoin;
     BridgeETH public bridgeETH;
     BridgeBase public bridgeBase;
-    
+
     address public owner;
     address public user1;
     address public user2;
-    
-    uint256 public constant INITIAL_MINT = 1000000 * 10**18;
-    uint256 public constant BRIDGE_AMOUNT = 1000 * 10**18;
+
+    uint256 public constant INITIAL_MINT = 1000000 * 10 ** 18;
+    uint256 public constant BRIDGE_AMOUNT = 1000 * 10 ** 18;
 
     function setUp() public {
         owner = address(this);
@@ -69,9 +69,9 @@ contract BridgeTest is Test {
     function test_BridgeBaseBurn() public {
         vm.prank(owner);
         bridgeBase.depositOnOtherSide(user1, BRIDGE_AMOUNT);
-        
+
         assertEq(bridgeBase.balanceOfTokens(user1), BRIDGE_AMOUNT, "Bridge balance not set correctly");
-        
+
         vm.startPrank(user1);
         uint256 initialBalance = bvCoin.balanceOf(user1);
         bridgeBase.burn(address(bvCoin), BRIDGE_AMOUNT);
@@ -84,11 +84,11 @@ contract BridgeTest is Test {
     function test_BridgeBaseWithdraw() public {
         vm.prank(owner);
         bridgeBase.depositOnOtherSide(user1, BRIDGE_AMOUNT);
-        
+
         assertEq(bridgeBase.balanceOfTokens(user1), BRIDGE_AMOUNT, "Bridge balance not set correctly");
-        
+
         uint256 initialBalance = bvCoin.balanceOf(user1);
-        
+
         vm.startPrank(user1);
         bridgeBase.withdraw(address(bvCoin), BRIDGE_AMOUNT);
         vm.stopPrank();
@@ -117,4 +117,3 @@ contract BridgeTest is Test {
         bridgeBase.burn(address(bvCoin), BRIDGE_AMOUNT);
     }
 }
-

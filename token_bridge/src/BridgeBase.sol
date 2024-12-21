@@ -12,10 +12,11 @@ interface IBBase is IERC20 {
 contract BridgeBase is Ownable {
     address public tokenAddress;
     mapping(address => uint256) public balanceOfTokens;
+    mapping(address => uint256) public nonces;
 
-    event Burn(address indexed sender, uint256 _tokenValue);
-    event Deposit(address indexed user, uint256 amount);
-    event Withdrawal(address indexed user, uint256 amount);
+    event Burn(address indexed sender, uint256 _tokenValue, uint256 nonce);
+    event Deposit(address indexed user, uint256 amount, uint256 nonce);
+    event Withdrawal(address indexed user, uint256 amount, uint256 nonce);
 
     constructor(address _tokenAddress) Ownable(_msgSender()) {
         require(_tokenAddress != address(0), "Zero address not allowed");
@@ -28,10 +29,11 @@ contract BridgeBase is Ownable {
         require(balanceOfTokens[msg.sender] >= _amount, "Insufficient balance");
 
         balanceOfTokens[msg.sender] -= _amount;
+        uint256 nonce = nonces[msg.sender]++;
 
         IBBase(_tokenAddress).burn(msg.sender, _amount);
 
-        emit Burn(msg.sender, _amount);
+        emit Burn(msg.sender, _amount, nonce);
     }
 
     function withdraw(address _tokenAddress, uint256 _amount) public {
@@ -40,18 +42,21 @@ contract BridgeBase is Ownable {
         require(balanceOfTokens[msg.sender] >= _amount, "Insufficient balance");
 
         balanceOfTokens[msg.sender] -= _amount;
-        
+        uint256 nonce = nonces[msg.sender]++;
+
         IBBase(_tokenAddress).mint(msg.sender, _amount);
 
-        emit Withdrawal(msg.sender, _amount);
+        emit Withdrawal(msg.sender, _amount, nonce);
     }
 
-    function depositOnOtherSide(address userAccount, uint256 _amount) public onlyOwner {
+    function depositOnOtherSide(address userAccount, uint256 _amount, uint256 _nonce) public onlyOwner {
         require(userAccount != address(0), "Invalid user address");
         require(_amount > 0, "Invalid amount");
+        require(_nonce == nonces[userAccount], "Invalid nonce");
 
         balanceOfTokens[userAccount] += _amount;
+        nonces[userAccount]++;
 
-        emit Deposit(userAccount, _amount);
+        emit Deposit(userAccount, _amount, _nonce);
     }
 }

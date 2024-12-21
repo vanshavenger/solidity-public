@@ -6,7 +6,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 
 contract VCoin is ERC20, Ownable, Pausable {
-    uint256 public constant MAX_SUPPLY = 1000000000 * 10 ** 18; 
+    uint256 public constant MAX_SUPPLY = 1000000000 * 10 ** 18;
 
     event Minted(address indexed to, uint256 amount);
     event Burned(address indexed from, uint256 amount);
@@ -19,7 +19,7 @@ contract VCoin is ERC20, Ownable, Pausable {
         emit Minted(_to, _amount);
     }
 
-     function burn(address _from, uint256 _amount) public onlyOwner whenNotPaused {
+    function burn(address _from, uint256 _amount) public onlyOwner whenNotPaused {
         _burn(_from, _amount);
         emit Burned(_from, _amount);
     }
