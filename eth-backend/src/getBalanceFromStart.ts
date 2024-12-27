@@ -45,7 +45,9 @@ const getBalanceFromStart = async (
       for (const log of logs) {
         const from = `0x${log.topics[1].slice(26)}`;
         const to = `0x${log.topics[2].slice(26)}`;
-        const amount = BigInt(log.data);
+          const amount = BigInt(log.data);
+          console.log(from, to, amount);
+
         if (from.toLowerCase() === TARGET_ADDRESS.toLowerCase()) {
           balance -= amount;
         }

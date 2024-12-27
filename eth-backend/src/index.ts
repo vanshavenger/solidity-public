@@ -17,3 +17,6 @@ const pollBlock = async (blockNumber: number) => {
 };
 
 pollBlock(21495523);
+
+
+console.log("0x" + "0x000000000000000000000000c88d82868118f23cdbb41fc8f0457ece17f4e615".slice(26));
