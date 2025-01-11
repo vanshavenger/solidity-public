@@ -8,16 +8,23 @@ import "src/StakingContract.sol";
 contract TestContract is Test {
     StakingContract c;
 
+    receive() external payable {}
+
     function setUp() public {
         c = new StakingContract();
     }
 
-    function testBar() public {
-        assertEq(uint256(1), uint256(1), "ok");
+    function testStake() public {
+        uint value = 10 ether;
+        c.stake{value: value}(value);
+        assert(c.totalStaked() == value);
     }
 
-    function testFoo(uint256 x) public {
-        vm.assume(x < type(uint128).max);
-        assertEq(x + x, x * 2);
+    function testUnStake() public {
+        uint value = 10 ether;
+        c.stake{value: value}(value);
+        c.unstake(value);
+        assert(c.totalStaked() == 0);
     }
+
 }

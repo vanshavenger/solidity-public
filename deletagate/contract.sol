@@ -17,6 +17,10 @@ contract Contract {
         (bool success, ) = delegate.delegatecall(
             abi.encodeWithSignature("setNum(uint256)", 2)
         );
+
+        if (!success) {
+            revert("Delegatecall failed");
+        }
         
         require(success, "Delegatecall failed");
     }
