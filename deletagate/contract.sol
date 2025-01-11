@@ -3,17 +3,36 @@ pragma solidity ^0.8.0;
 
 contract Contract {
     uint public num;
+    address public delegate;
 
-    constructor() {}
+    receive() external payable {}
 
-    function setNumTo2(address sc) public {
-        require(sc != address(0), "Invalid delegate address");
+    constructor(address _delegate) {
+        delegate = _delegate;
+    }
 
-        (bool success, ) = sc.delegatecall(
+    function setNumTo2() public {
+        require(delegate != address(0), "Invalid delegate address");
+
+        (bool success, ) = delegate.delegatecall(
             abi.encodeWithSignature("setNum(uint256)", 2)
         );
         
         require(success, "Delegatecall failed");
+    }
+
+    function setDelegate(address _delegate) public  {
+        require(_delegate != address(0), "Invalid delegate address");
+        delegate = _delegate;
+    }
+
+    fallback(bytes calldata) external payable returns (bytes memory) {
+        require(delegate != address(0), "Invalid delegate address");
+
+        (bool success, bytes memory data) = delegate.delegatecall(msg.data);
+        
+        require(success, "Delegatecall failed");
+        return data;
     }
 }
 
