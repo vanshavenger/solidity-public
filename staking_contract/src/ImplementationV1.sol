@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.13;
 
-contract ImplementationV1 {
+import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+contract ImplementationV1 is Pausable, Ownable {
     uint256 public totalStaked;
     mapping(address => uint256) public staked;
 
-    function stake(uint256 amount) public payable {
+    constructor() Ownable(msg.sender) {}
+
+    function stake(uint256 amount) public payable whenNotPaused {
         require(amount > 0, "Incorrect amount");
         require(msg.value == amount, "Incorrect amount");
 
@@ -13,7 +18,7 @@ contract ImplementationV1 {
         totalStaked += amount;
     }
 
-    function unstake(uint256 amount) public payable {
+    function unstake(uint256 amount) public whenNotPaused {
         require(amount > 0, "Incorrect amount");
         require(staked[msg.sender] >= amount, "Not enough staked");
 
