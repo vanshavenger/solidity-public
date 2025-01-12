@@ -5,8 +5,7 @@ contract StakingContract {
     uint256 public totalStaked;
     mapping(address => uint256) public staked;
 
-    constructor() {
-    }
+    constructor() {}
 
     function stake(uint256 amount) public payable {
         require(amount > 0, "Incorrect amount");
@@ -25,5 +24,4 @@ contract StakingContract {
 
         payable(msg.sender).transfer(amount);
     }
-
 }

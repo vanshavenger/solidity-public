@@ -15,27 +15,44 @@ contract TestContract is Test {
     }
 
     function testStake() public {
-        uint value = 10 ether;
+        uint256 value = 10 ether;
         c.stake{value: value}(value);
         assert(c.totalStaked() == value);
     }
 
     function testFailStake() public {
-        uint value = 10 ether;
+        uint256 value = 10 ether;
         c.stake(value);
     }
 
     function testFailUnStake() public {
-        uint value = 10 ether;
+        uint256 value = 10 ether;
         c.stake{value: value}(value);
         c.unstake(value + 1);
     }
 
     function testUnStake() public {
-        uint value = 10 ether;
+        uint256 value = 10 ether;
         c.stake{value: value}(value);
         c.unstake(value);
         assert(c.totalStaked() == 0);
     }
 
+    function testStakeForAnotherAddress() public {
+        uint256 value = 10 ether;
+        vm.deal(0x587EFaEe4f308aB2795ca35A27Dff8c1dfAF9e3f, value);
+        vm.prank(0x587EFaEe4f308aB2795ca35A27Dff8c1dfAF9e3f);
+        c.stake{value: value}(value);
+        assert(c.totalStaked() == value);
+    }
+
+    function testUnStakeForAnotherAddress() public {
+        uint256 value = 11 ether;
+        vm.deal(0x587EFaEe4f308aB2795ca35A27Dff8c1dfAF9e3f, value);
+        vm.startPrank(0x587EFaEe4f308aB2795ca35A27Dff8c1dfAF9e3f);
+        assert(address(0x587EFaEe4f308aB2795ca35A27Dff8c1dfAF9e3f).balance == value);
+        c.stake{value: value}(value);
+        c.unstake(value / 2);
+        assert(c.totalStaked() == value / 2);
+    }
 }
