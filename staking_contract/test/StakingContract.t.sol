@@ -45,18 +45,23 @@ contract TestContract is Test {
 
     function testStakeOnAnotherUser() public {
         uint256 value = 10 ether;
+        vm.deal(user, value);
+        vm.startPrank(user);
         (bool success,) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
         require(success, "Stake failed");
-        assert(c.staked(owner) == value);
+        assert(c.staked(user) == value);
     }
 
     function testUnStakeOnAnotherUser() public {
         uint256 value = 10 ether;
+        vm.deal(user, value);
+        vm.startPrank(user);
         (bool success,) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
         require(success, "Stake failed");
+
         (success,) = address(c).call(abi.encodeWithSignature("unstake(uint256)", value / 2));
         require(success, "Unstake failed");
-        assert(c.staked(owner) == value / 2);
+        assert(c.staked(user) == value / 2);
     }
 
     function testPause() public {
