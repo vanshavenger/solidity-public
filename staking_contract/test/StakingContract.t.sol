@@ -117,4 +117,55 @@ contract TestContract is Test {
         (success,) = address(c).call(abi.encodeWithSignature("unpause()"));
         require(success, "Unpause should fail for non-owner but didn't");
     }
+
+    function testRewardAfterStakingPeriod() public {
+        uint256 value = 10 ether;
+        vm.deal(user, value);
+        vm.prank(user);
+        (bool success,) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
+
+        vm.warp(block.timestamp + 11 days);
+
+        vm.prank(user);
+        (success,) = address(c).call(abi.encodeWithSignature("claimReward()"));
+        require(success, "Claim reward failed");
+
+        uint256 balance = c.balanceOf(user);
+        assertEq(balance, 100 * 10 ** 18, "Incorrect reward amount");
+    }
+
+    function testNoRewardBeforeStakingPeriod() public {
+        uint256 value = 10 ether;
+        vm.deal(user, value);
+        vm.prank(user);
+        (bool success,) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
+
+        vm.warp(block.timestamp + 9 days);
+
+        vm.prank(user);
+        (success,) = address(c).call(abi.encodeWithSignature("claimReward()"));
+        require(!success, "Claim reward should fail");
+
+        uint256 balance = c.balanceOf(user);
+        assertEq(balance, 0, "Should not have received any reward");
+    }
+
+    function testRewardOnUnstake() public {
+        uint256 value = 10 ether;
+        vm.deal(user, value);
+        vm.prank(user);
+        (bool success,) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
+
+        vm.warp(block.timestamp + 15 days);
+
+        vm.prank(user);
+        (success,) = address(c).call(abi.encodeWithSignature("unstake(uint256)", value));
+        require(success, "Unstake failed");
+
+        uint256 balance = c.balanceOf(user);
+        assertEq(balance, 100 * 10 ** 18, "Incorrect reward amount");
+    }
 }

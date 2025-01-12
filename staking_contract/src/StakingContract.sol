@@ -3,13 +3,15 @@ pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract StakingContract is Pausable, Ownable {
+contract StakingContract is Pausable, Ownable, ERC20 {
     uint256 public totalStaked;
     mapping(address => uint256) public staked;
+    mapping(address => uint256) public stakingTime;
     address public implementation;
 
-    constructor(address _implementation) Ownable(msg.sender) {
+    constructor(address _implementation) Ownable(msg.sender) ERC20("Staking Reward", "STR") {
         implementation = _implementation;
     }
 
