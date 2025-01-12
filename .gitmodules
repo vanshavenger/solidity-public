@@ -4,3 +4,6 @@
 [submodule "token_bridge/lib/openzeppelin-contracts"]
 	path = token_bridge/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "staking_contract/lib/openzeppelin-contracts"]
+	path = staking_contract/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
