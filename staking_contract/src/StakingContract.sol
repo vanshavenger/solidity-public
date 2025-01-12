@@ -3,7 +3,6 @@ pragma solidity ^0.8.13;
 
 contract StakingContract {
     uint256 public totalStaked;
-
     mapping(address => uint256) public staked;
 
     constructor() {

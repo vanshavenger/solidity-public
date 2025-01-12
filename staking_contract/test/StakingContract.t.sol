@@ -20,6 +20,17 @@ contract TestContract is Test {
         assert(c.totalStaked() == value);
     }
 
+    function testFailStake() public {
+        uint value = 10 ether;
+        c.stake(value);
+    }
+
+    function testFailUnStake() public {
+        uint value = 10 ether;
+        c.stake{value: value}(value);
+        c.unstake(value + 1);
+    }
+
     function testUnStake() public {
         uint value = 10 ether;
         c.stake{value: value}(value);
