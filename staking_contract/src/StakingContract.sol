@@ -4,24 +4,38 @@ pragma solidity ^0.8.13;
 contract StakingContract {
     uint256 public totalStaked;
     mapping(address => uint256) public staked;
+    address public implementation;
 
-    constructor() {}
+    constructor(address _implementation) {
+        implementation = _implementation;
+    }
 
     function stake(uint256 amount) public payable {
-        require(amount > 0, "Incorrect amount");
-        require(msg.value == amount, "Incorrect amount");
+        (bool success, ) = implementation.delegatecall(abi.encodeWithSignature("stake(uint256)", amount));
 
-        staked[msg.sender] += amount;
-        totalStaked += amount;
+        if (!success) {
+            revert("Delegatecall failed");
+        }
+
+        require(success, "Delegatecall failed");
     }
 
     function unstake(uint256 amount) public payable {
-        require(amount > 0, "Incorrect amount");
-        require(staked[msg.sender] >= amount, "Not enough staked");
+        (bool success, ) = implementation.delegatecall(abi.encodeWithSignature("unstake(uint256)", amount));
 
-        staked[msg.sender] -= amount;
-        totalStaked -= amount;
+        if (!success) {
+            revert("Delegatecall failed");
+        }
 
-        payable(msg.sender).transfer(amount);
+        require(success, "Delegatecall failed");
+    }
+
+    fallback() external payable {
+        (bool success, ) = implementation.delegatecall(msg.data);
+        require(success, "Delegatecall failed");
+    }
+
+    receive() external payable {
+        require(msg.value > 0, "Incorrect amount");
     }
 }
