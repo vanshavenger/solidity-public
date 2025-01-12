@@ -11,7 +11,7 @@ contract ImplementationV1 is Pausable, Ownable, ERC20 {
     mapping(address => uint256) public stakingTime;
 
     uint256 public constant REWARD_PERIOD = 10 days;
-    uint256 public constant REWARD_AMOUNT = 100 * 10 ** 18;
+    uint256 public constant REWARD_AMOUNT = 100 * 1e18;
 
     constructor() Ownable(msg.sender) ERC20("Staking Reward", "STR") {}
 
