@@ -21,6 +21,10 @@ contract StakingContract is Pausable, Ownable {
         _unpause();
     }
 
+    function upgradeImplementation(address newImplementation) public onlyOwner {
+        implementation = newImplementation;
+    }
+
     fallback() external payable whenNotPaused {
         (bool success,) = implementation.delegatecall(msg.data);
         require(success, "Delegatecall failed");
