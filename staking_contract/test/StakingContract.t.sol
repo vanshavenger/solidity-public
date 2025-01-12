@@ -19,25 +19,31 @@ contract TestContract is Test {
 
     function testStake() public {
         uint256 value = 10 ether;
-        c.stake{value: value}(value);
+        (bool success, ) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
         assert(c.totalStaked() == value);
     }
 
     function testFailStake() public {
         uint256 value = 10 ether;
-        c.stake(value);
+        (bool success, ) = address(c).call(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake should fail but didn't");
     }
 
     function testFailUnStake() public {
         uint256 value = 10 ether;
-        c.stake{value: value}(value);
-        c.unstake(value + 1);
+        (bool success, ) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
+        (success, ) = address(c).call(abi.encodeWithSignature("unstake(uint256)", value + 1));
+        require(success, "Unstake should fail but didn't");
     }
 
     function testUnStake() public {
         uint256 value = 10 ether;
-        c.stake{value: value}(value);
-        c.unstake(value);
+        (bool success, ) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
+        (success, ) = address(c).call(abi.encodeWithSignature("unstake(uint256)", value));
+        require(success, "Unstake failed");
         assert(c.totalStaked() == 0);
     }
 
@@ -46,7 +52,8 @@ contract TestContract is Test {
         address user = address(0x587EFaEe4f308aB2795ca35A27Dff8c1dfAF9e3f);
         vm.deal(user, value);
         vm.prank(user);
-        c.stake{value: value}(value);
+        (bool success, ) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
         assert(c.totalStaked() == value);
     }
 
@@ -56,8 +63,10 @@ contract TestContract is Test {
         vm.deal(user, value);
         vm.startPrank(user);
         assert(user.balance == value);
-        c.stake{value: value}(value);
-        c.unstake(value / 2);
+        (bool success, ) = address(c).call{value: value}(abi.encodeWithSignature("stake(uint256)", value));
+        require(success, "Stake failed");
+        (success, ) = address(c).call(abi.encodeWithSignature("unstake(uint256)", value / 2));
+        require(success, "Unstake failed");
         assert(user.balance == value / 2);
         assert(c.totalStaked() == value / 2);
         vm.stopPrank();
