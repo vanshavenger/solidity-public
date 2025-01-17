@@ -7,7 +7,9 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract Token is ERC20, Ownable {
     address public stakingContract;
 
-    constructor() ERC20("Token", "TKN") Ownable(msg.sender) {}
+    constructor(address _stakingContract) ERC20("Token", "TKN") Ownable(msg.sender) {
+        stakingContract = _stakingContract;
+    }
 
     function setStakingContract(address _stakingContract) external onlyOwner {
         stakingContract = _stakingContract;
